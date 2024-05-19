@@ -8,6 +8,7 @@ public class GameManger : MonoBehaviour
     public GameObject donglePrefab;
     public Transform dongleGroup;
 
+    public int maxlevel;
     void Awake()
     {
         Application.targetFrameRate = 60;
@@ -27,7 +28,8 @@ public class GameManger : MonoBehaviour
     {
         Dongle newDongle = GetDongle();
         lastDongle = newDongle;
-        lastDongle.level = Random.Range(0, 8);
+        lastDongle.manager = this;
+        lastDongle.level = Random.Range(0, maxlevel);
         lastDongle.gameObject.SetActive(true);
         StartCoroutine(WaitNext());
     }
