@@ -11,6 +11,7 @@ public class Dongle : MonoBehaviour
     public int level;
     public bool isDrag;
     public bool isMerge;
+    public bool isAttach;
 
     public Rigidbody2D rigid;
     CircleCollider2D circle;
@@ -63,6 +64,27 @@ public class Dongle : MonoBehaviour
         isDrag = false;
         rigid.simulated = true;
     }
+
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        StartCoroutine("AttachRoutine");
+    }
+
+    IEnumerator AttachRoutine()
+    {
+        if (isAttach)
+        {
+            yield break;
+        }
+        isAttach = true;
+        manager.SfxPlay(GameManger.Sfx.Attach);
+
+        yield return new WaitForSeconds(0.2f);
+
+        isAttach = false;
+    } 
+
 
     void OnCollisionStay2D(Collision2D collision)
     {
@@ -140,6 +162,7 @@ public class Dongle : MonoBehaviour
 
         anim.SetInteger("Level", level + 1);
         EffectPlay();
+        manager.SfxPlay(GameManger.Sfx.LevelUp);
 
         yield return new WaitForSeconds(0.3f);
         level++;
