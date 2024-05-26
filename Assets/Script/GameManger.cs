@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class GameManger : MonoBehaviour
 {
@@ -9,8 +10,10 @@ public class GameManger : MonoBehaviour
     public Transform dongleGroup;
     public GameObject effectPrefab;
     public Transform effectGroup;
+    public int score;
 
     public int maxlevel;
+    public bool isOver;
     void Awake()
     {
         Application.targetFrameRate = 60;
@@ -32,6 +35,10 @@ public class GameManger : MonoBehaviour
     }
     void NextDongle()
     {
+        if (isOver)
+        {
+            return;
+        }
         Dongle newDongle = GetDongle();
         lastDongle = newDongle;
         lastDongle.manager = this;
@@ -64,6 +71,38 @@ public class GameManger : MonoBehaviour
         {
             lastDongle.Drop();
             lastDongle = null;
+        }
+    }
+
+
+    public void GameOver()
+    {
+        if (isOver)
+        {
+            return;
+        }
+        isOver = true;
+
+        StartCoroutine("GameOverRoutine");
+    }
+
+
+    IEnumerator GameOverRoutine()
+    {
+        //1. 화면 안에 활성화 되어있는 모든 동글 가져오기
+        Dongle[] dongles = FindObjectsOfType<Dongle>();
+
+        for(int i = 0; i < dongles.Length; i++)
+        {
+            dongles[i].rigid.simulated = false;
+        }
+
+
+
+        for (int i = 0; i < dongles.Length; i++)
+        {
+            dongles[i].Hide(Vector3.up * 100);
+            yield return new WaitForSeconds(0.1f);
         }
     }
 }
